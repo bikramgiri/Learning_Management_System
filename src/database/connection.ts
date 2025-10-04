@@ -6,6 +6,10 @@ if (!MONGODB_CS) {
 }
 
 const connectDB = async () => {
+  if (mongoose.connection.readyState === 1) {
+    console.log("MongoDB is already connected");
+    return;
+  }
   try {
     await mongoose.connect(MONGODB_CS);
     console.log("MongoDB connected successfully");
