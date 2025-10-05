@@ -18,6 +18,10 @@ const courseSchema = new Schema({
       type: Number, 
       required: true
   },
+  courseInstructor: { 
+      type: String, 
+      required: true 
+  },
   createdAt: { 
       type: Date, 
       default: Date.now 
