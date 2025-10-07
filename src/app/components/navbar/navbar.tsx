@@ -109,7 +109,7 @@ const Navbar = () => {
               />
             </svg>
           </button>
-          <a href="#">
+          <a href="/login">
             <button
               className="cursor-pointer py-1.5 px-3 m-1 text-center border rounded-md hover:bg-indigo-700 dark:text-white dark:bg-indigo-600 hidden lg:block"
             >
@@ -120,7 +120,7 @@ const Navbar = () => {
               className="py-1.5 px-3 m-1 text-center border dark:border-indigo-600 rounded-md hover:bg-gray-100 dark:text-indigo-700 hidden lg:inline-block"
               href="#"
             >
-              Sign In
+              Sign Up
           </a>
         </div>
       </nav>
