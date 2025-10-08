@@ -1,11 +1,106 @@
 'use client';
+import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
+// Child component for session-dependent rendering
+const AuthSection = () => {
+  const { data: session, status } = useSession();
+  console.log("Session data in Navbar:", session);
+  console.log("Session status in Navbar:", status);
+
+  // Avoid rendering until session status is resolved
+  if (status === 'loading') {
+    return null; // Render nothing during loading to avoid mismatch
+  }
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: '/auth/login' });
+  };
+
+  return (
+    <>
+      {session ? (
+        <button
+          className="cursor-pointer py-1.5 px-3 text-center border rounded-md hover:bg-red-700 dark:text-white dark:bg-red-500 hidden lg:block"
+          onClick={handleSignOut}
+          aria-label="Sign out"
+        >
+          Sign Out
+        </button>
+      ) : (
+        <>
+          <Link 
+          href="/auth/login">
+            <button
+              className="cursor-pointer py-1.5 px-3 text-center border rounded-md hover:bg-indigo-700 dark:text-white dark:bg-indigo-600 hidden lg:block"
+              aria-label="Log in"
+            >
+              Log in
+            </button>
+          </Link>
+          <Link
+            href="/auth/signup"
+            className="py-1.5 px-3 text-center border dark:border-indigo-600 rounded-md hover:bg-gray-100 dark:text-indigo-700 hidden lg:inline-block"
+            aria-label="Sign up"
+          >
+            Sign Up
+          </Link>
+        </>
+      )}
+    </>
+  );
+};
+
+// Child component for mobile auth section
+const MobileAuthSection = () => {
+  const { data: session, status } = useSession();
+
+  if (status === 'loading') {
+    return null;
+  }
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: '/auth/login' });
+  };
+
+  return (
+    <>
+      {session ? (
+        <button
+          className="w-[97.6%] h-11 block m-1 border-gray-300 border rounded-md hover:bg-red-700 dark:text-white dark:bg-red-500 px-4 py-3 mb-3 text-sm text-center font-semibold"
+          onClick={handleSignOut}
+          aria-label="Sign out"
+        >
+          Sign Out
+        </button>
+      ) : (
+        <>
+          <Link
+            href="/auth/login"
+            className="block m-1 border-gray-300 border rounded-md hover:bg-indigo-700 dark:text-white dark:bg-indigo-600 px-4 py-3 mb-3 text-sm text-center font-semibold"
+            aria-label="Log in"
+          >
+            Log in
+          </Link>
+          <Link
+            href="/auth/signup"
+            className="block m-1 border rounded-md px-4 py-3 mb-2 text-xs text-center font-semibold border-gray-300 hover:bg-gray-600 dark:text-indigo-700"
+            aria-label="Sign up"
+          >
+            Sign Up
+          </Link>
+        </>
+      )}
+    </>
+  );
+};
+
 const Navbar = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false); // Default to false for SSR consistency
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Initialize dark mode only on client-side
   useEffect(() => {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     setIsDarkMode(prefersDark);
@@ -13,18 +108,21 @@ const Navbar = () => {
   }, []);
 
   const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle('dark', !isDarkMode);
+    setIsDarkMode((prev) => {
+      const newMode = !prev;
+      document.documentElement.classList.toggle('dark', newMode);
+      return newMode;
+    });
   };
 
   const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+    setIsMobileMenuOpen((prev) => !prev);
   };
 
   return (
     <>
       <nav className="relative px-4 py-2 flex justify-between items-center bg-white dark:bg-white border-b-2 dark:border-gray-200">
-        <Link href='/' className="text-3xl font-bold dark:text-indigo-600">
+        <Link href="/" className="text-3xl font-bold dark:text-indigo-600">
           Learning <span className="dark:text-gray-800">Hub</span>
         </Link>
         <div className="lg:hidden">
@@ -62,7 +160,6 @@ const Navbar = () => {
                   className="cursor-pointer text-gray-600 dark:text-gray-500 h-4 w-4 fill-current"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 56.966 56.966"
-                  // style={{ enableBackground: 'new 0 0 56.966 56.966' }}
                   xmlSpace="preserve"
                 >
                   <path d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23 s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92 c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17 s-17-7.626-17-17S14.61,6,23.984,6z" />
@@ -71,18 +168,27 @@ const Navbar = () => {
             </div>
           </li>
         </ul>
-        <div className="hidden lg:flex">
-          <a href="#">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
-            stroke="currentColor" className="cursor-pointer w-10 h-10 text-indigo-700 p-1 mr-4">
-            <path strokeLinecap="round" strokeLinejoin="round"
-              d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+        <div className="hidden lg:flex items-center space-x-4">
+          <Link href="/cart">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+              className="cursor-pointer w-10 h-10 text-indigo-700 p-1"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
+              />
             </svg>
-          </a>
+          </Link>
           <button
             id="theme-toggle"
             type="button"
-            className="cursor-pointer lg:inline-block lg:ml-auto py-1.5 px-3 m-1 text-center border border-indigo-700 rounded-md dark:bg-gray-700 hover:bg-gray-800 dark:text-indigeo-700"
+            className="cursor-pointer py-1.5 px-3 text-center border border-indigo-700 rounded-md dark:bg-gray-600 hover:bg-gray-800 dark:text-gray-300"
             onClick={toggleTheme}
             aria-label="Toggle theme"
           >
@@ -109,31 +215,16 @@ const Navbar = () => {
               />
             </svg>
           </button>
-          <a href="/login">
-            <button
-              className="cursor-pointer py-1.5 px-3 m-1 text-center border rounded-md hover:bg-indigo-700 dark:text-white dark:bg-indigo-600 hidden lg:block"
-            >
-              Log in
-            </button>
-          </a>
-          <a
-              className="py-1.5 px-3 m-1 text-center border dark:border-indigo-600 rounded-md hover:bg-gray-100 dark:text-indigo-700 hidden lg:inline-block"
-              href="#"
-            >
-              Sign Up
-          </a>
+          <AuthSection />
         </div>
       </nav>
 
       {/* Mobile navbar */}
       <div className={`navbar-menu relative z-50 ${isMobileMenuOpen ? '' : 'hidden'}`}>
-        <div className="navbar-backdrop fixed inset-0 bg-gray-00 opacity-50" />
+        <div className="navbar-backdrop fixed inset-0 bg-gray-800 opacity-50" />
         <nav className="fixed bg-white dark:bg-gray-500 top-0 left-0 bottom-0 flex flex-col w-5/6 max-w-sm py-6 px-6 border-r overflow-y-auto">
           <div className="flex items-center mb-8">
-            <Link
-              className="mr-auto text-2xl font-bold dark:text-indigo-600"
-              href="/"
-            >
+            <Link href="/" className="mr-auto text-2xl font-bold dark:text-indigo-600">
               Learning <span className="dark:text-gray-800">Hub</span>
             </Link>
             <button
@@ -173,7 +264,6 @@ const Navbar = () => {
                 className="text-gray-600 cursor-pointer dark:text-gray-200 h-4 w-4 fill-current"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 56.966 56.966"
-                // style={{ enableBackground: 'new 0 0 56.966 56.966' }}
                 xmlSpace="preserve"
               >
                 <path d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23 s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92 c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17 s-17-7.626-17-17S14.61,6,23.984,6z" />
@@ -182,13 +272,22 @@ const Navbar = () => {
           </div>
           <div className="mt-auto">
             <div className="pt-6">
-            <a href="#">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
-                  stroke="currentColor" className="w-[97.6%] h-11 cursor-pointer mb-3 flex justify-center items-center py-1.5 px-3 m-1 text-center bg-gray-100 border border-gray-300 rounded-md text-black hover:bg-gray-100 dark:text-gray-300 dark:bg-gray-700 dark:hover:bg-gray-700">
-                  <path strokeLinecap="round" strokeLinejoin="round"
-                    d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+              <Link href="/cart">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="w-[97.6%] h-11 cursor-pointer mb-3 flex justify-center items-center py-1.5 px-3 m-1 text-center bg-gray-100 border border-gray-300 rounded-md text-black hover:bg-gray-100 dark:text-gray-300 dark:bg-gray-700 dark:hover:bg-gray-700"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
+                  />
                 </svg>
-              </a>
+              </Link>
               <button
                 id="theme-toggle-2"
                 type="button"
@@ -219,18 +318,7 @@ const Navbar = () => {
                   />
                 </svg>
               </button>
-              <a
-                className="block m-1 border-gray-300 border rounded-md hover:bg-indigo-700 dark:text-white dark:bg-indigo-600 px-4 py-3 mb-3 text-sm text-center font-semibold"
-                href="#"
-              >
-                Log in
-              </a>
-              <a
-                className="block m-1 border rounded-md px-4 py-3 mb-2 text-xs text-center font-semibold border-gray-300 hover:bg-gray-600"
-                href="#"
-              >
-                Sign Up
-              </a>
+              <MobileAuthSection />
             </div>
             <p className="my-4 text-xs text-center text-gray-300">
               <span>Learning Hub © 2025</span>
