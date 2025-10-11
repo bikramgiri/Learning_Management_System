@@ -1,9 +1,13 @@
 import connectDB from "@/database/connection";
 import Category from "@/database/models/category.schema";
+import authMiddleware, { checkLoggedInOrNot } from "@/middleware/auth.middleware";
+import { NextRequest } from "next/server";
 
 // *Add a new category
 export async function createCategory(req: Request) {
   try {
+    const response = await authMiddleware(req as NextRequest);
+    if(response) return response;
     await connectDB();
     const { name, description } = await req.json();
     // Already exists or not
@@ -71,6 +75,8 @@ export async function getCategories() {
 // *Delete a category
 export async function deleteCategory(req: Request) {
   try {
+    authMiddleware(req as NextRequest);
+    checkLoggedInOrNot(req as NextRequest);
     await connectDB();
       const { id } = await req.json();
       const category = await Category.findById(id);
@@ -103,6 +109,7 @@ export async function deleteCategory(req: Request) {
 // *Update a category
 export async function updateCategory(req: Request) {
   try {
+    authMiddleware(req as NextRequest);
     await connectDB();
     const { id, name, description } = await req.json();
     const category = await Category.findById(id);

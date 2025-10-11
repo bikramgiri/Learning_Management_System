@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 // Define the user roles
-enum Role {
+export enum Role {
   Student = "student",
   Admin = "admin",
 }
