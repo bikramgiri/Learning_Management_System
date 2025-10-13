@@ -31,8 +31,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning={true}
       >
-        <Navbar />
-        {children}
+        {/* <SessionWrapper> */}
+          <Navbar />
+          {children}
+        {/* </SessionWrapper> */}
       </body>
     </html>
     </SessionWrapper>

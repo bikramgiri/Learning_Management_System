@@ -1,21 +1,12 @@
-import { createCategory, deleteCategory, getCategories, updateCategory } from "./category.controller";
+import { NextRequest } from "next/server";
+import { createCategory, getCategories } from "./category.controller";
 
 // *Add a new category
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
       return createCategory(req);
 }
 
 // *Get all categories
-export async function GET() {
-      return getCategories();
-}
-
-// *Delete a category
-export async function DELETE(req: Request) {
-      return deleteCategory(req);
-}
-
-// *Update a category
-export async function PATCH(req: Request) {
-      return updateCategory(req);
+export async function GET(req: NextRequest) {
+      return getCategories(req);
 }

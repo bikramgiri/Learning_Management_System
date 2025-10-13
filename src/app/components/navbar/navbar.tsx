@@ -121,7 +121,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="relative px-4 py-2 flex justify-between items-center bg-white dark:bg-white border-b-2 dark:border-gray-200">
+      <nav className="relative px-4 py-2 flex justify-between items-center bg-white dark:bg-white border-b-2 dark:border-gray-200 shadow-md">
         <Link href="/" className="text-3xl font-bold dark:text-indigo-600">
           Learning <span className="dark:text-gray-800">Hub</span>
         </Link>
