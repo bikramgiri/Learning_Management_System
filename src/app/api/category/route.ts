@@ -7,6 +7,6 @@ export async function POST(req: NextRequest) {
 }
 
 // *Get all categories
-export async function GET(req: NextRequest) {
-      return getCategories(req);
+export async function GET() {
+      return getCategories();
 }

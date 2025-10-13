@@ -1,9 +1,10 @@
 import mongoose, {Schema} from "mongoose";
 
-interface ICategory extends Document{
+export interface ICategory extends Document{
+      _id: string;
       name: string;
       description?: string;
-      CreatedAt: Date;
+      createdAt: Date;
 }
 
 const categorySchema = new Schema<ICategory>({
@@ -16,7 +17,7 @@ const categorySchema = new Schema<ICategory>({
             type: String,
             required: true
       },
-      CreatedAt: {
+      createdAt: {
             type: Date,
             default: Date.now
       }

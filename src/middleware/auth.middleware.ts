@@ -2,28 +2,30 @@
 // Then: check whether user is admin or not
 
 // import { Role } from "@/database/models/user.schema";
-// import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
+// import { getToken } from "next-auth/jwt";
+//@ts-ignore
 
 const authMiddleware = async (req: NextRequest) => {
-      // const session = await getServerSession(authOptions);
-      // console.log("Session in middleware:", session);
+      const session = await getServerSession(authOptions);
+      console.log("Session in middleware:", session);
 
       // Use getToken to verify JWT from cookies
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-  console.log('Token in auth middleware:', token);
+//   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+//   console.log('Token in auth middleware:', token);
       // check whether user is logged in or not
-      if(!token){
+      if(!session){
             return NextResponse.json(
                   {
-                        message: "You must be logged in to perform this action"
+                    message: "You must be logged in to perform this action"
                   },
                   {status: 401}
             );
       }
-       return null;
-      // return NextResponse.next();
+      //  return null;
+      return NextResponse.next();
 
       // // check whether user is admin or not
       // if(session.user.role !== Role.Admin){

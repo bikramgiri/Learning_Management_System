@@ -51,12 +51,15 @@
 
 
 
-import NextAuth, { AuthOptions } from 'next-auth';
+import NextAuth, { AuthOptions, Session } from 'next-auth';
+import { } from "next-auth"; // to include the module augmentation
 import GoogleProvider from 'next-auth/providers/google';
 // import FacebookProvider from 'next-auth/providers/facebook';
 import connectDB from '@/database/connection';
 import User from '@/database/models/user.schema';
 
+interface IToken { name: string, email: string, picture: string, sub: string, id: string, role: string }
+//@ts-ignore
 export const authOptions: AuthOptions = {
   providers: [
     GoogleProvider({
@@ -88,24 +91,30 @@ export const authOptions: AuthOptions = {
         return false;
       }
     },
-    async session({ session, token }: { session: { user: { name?: string; email?: string; image?: string; role?: string } }; token: { sub: string } }) {
-      try {
-        await connectDB();
-        const user = await User.findOne({ googleId: token.sub });
-        if (user && session.user) {
-          session.user.role = user.role || 'student';
-        }
-        return session;
-      } catch (error) {
-        console.error('Error in session callback:', error);
-        return session;
+    async jwt({ token }: { token: IToken }) {
+      await connectDB();
+      const user = await User.findOne({
+        email: token.email
+      });
+      if (user) {
+        token.id = user._id;
+        token.role = user.role;
       }
+      return token;
+      },
+
+    async session({ session, token }: { session: Session, token: IToken }) {
+      if (token) {
+        session.user.id = token.id;
+        session.user.role = token.role || 'student';
+      }
+      return session;
     },
   },
 };
 
+//@ts-ignore
 const handler = NextAuth(authOptions);
-
 export { handler as GET, handler as POST, handler as PATCH, handler as DELETE };
 
 // export default NextAuth(authOptions);

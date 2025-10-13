@@ -6,9 +6,11 @@ import { NextRequest, NextResponse } from "next/server";
 // *Add a new category
 export async function createCategory(req: Request) {
   try {
+    await connectDB();
+
     const authResponse = await authMiddleware(req as NextRequest);
     if(authResponse) return authResponse;
-    await connectDB();
+
     const { name, description } = await req.json();
     // Already exists or not
     const existingCategory = await Category.findOne({ name: name });
@@ -20,13 +22,14 @@ export async function createCategory(req: Request) {
         { status: 400 }
       );
     }
-    await Category.create({
+    const category = await Category.create({
       name: name,
       description: description,
     });
     return Response.json(
       {
         message: "Category created successfully",
+        data : category
       },
       { status: 201 }
     );
@@ -42,11 +45,13 @@ export async function createCategory(req: Request) {
 }
 
 // *Get all categories
-export async function getCategories(req: Request) {
+export async function getCategories() {
   try {
-    const authResponse = await authMiddleware(req as NextRequest);
-    if (authResponse) return authResponse;
     await connectDB();
+
+    // const authResponse = await authMiddleware(req as NextRequest);
+    // if (authResponse) return authResponse;
+
     const categories = await Category.find(); // find return array of categories
     if(categories.length === 0) {
       return Response.json(
@@ -68,22 +73,23 @@ export async function getCategories(req: Request) {
     return Response.json(
       {
         message: "Something went wrong"
-      },
-      { status: 500 }
+      },{ status: 500 }
     );
   }
 }
 
-// Helper to extract ID from URL
-const getIdFromRequest = (req: NextRequest) => {
-  const url = new URL(req.url);
-  const id = url.pathname.split('/').pop(); // Get the last segment of the URL
-  return id;
-};
+// // Helper to extract ID from URL
+// const getIdFromRequest = (req: NextRequest) => {
+//   const url = new URL(req.url);
+//   const id = url.pathname.split('/').pop(); // Get the last segment of the URL
+//   return id;
+// };
 
 // DELETE a category
-export async function deleteCategory(req: NextRequest) {
+export async function deleteCategory(req: NextRequest, id: string | undefined) {
   try {
+      await connectDB();
+
     // Run authentication middleware
     const authResponse = await authMiddleware(req as NextRequest);
     if (authResponse) {
@@ -96,8 +102,7 @@ export async function deleteCategory(req: NextRequest) {
     //   return loggedInResponse; // Return error if not logged in
     // }
 
-    await connectDB();
-    const id = getIdFromRequest(req);
+    // const id = getIdFromRequest(req);
 
     if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) {
       return NextResponse.json({ message: 'Invalid category ID' }, { status: 400 });
@@ -108,8 +113,16 @@ export async function deleteCategory(req: NextRequest) {
       return NextResponse.json({ message: 'Category not found' }, { status: 404 });
     }
 
-    await Category.findByIdAndDelete(id);
-    return NextResponse.json({ message: 'Category deleted successfully' }, { status: 200 });
+    const deletedCategory = await Category.findByIdAndDelete(id);
+    if(!deletedCategory) {
+      return NextResponse.json({ 
+        message: 'Failed to delete category' 
+      }, { status: 400 });
+    }
+    return NextResponse.json({ 
+      message: 'Category deleted successfully',
+      data: deletedCategory 
+    }, { status: 200 });
   } catch (error) {
     console.error('Error deleting category:', error);
     return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
@@ -117,34 +130,40 @@ export async function deleteCategory(req: NextRequest) {
 }
 
 // PATCH (Update) a category
-export async function updateCategory(req: NextRequest) {
+export async function updateCategory(req: Request, id: string | undefined) {
   try {
+    await connectDB();
+
     // Run authentication middleware
     const authResponse = await authMiddleware(req as NextRequest);
     if (authResponse) return authResponse; // Return 401/403 if auth fails
 
-    await connectDB();
-    const id = getIdFromRequest(req);
+    // const id = getIdFromRequest(req);
 
     if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) {
-      return NextResponse.json({ message: 'Invalid category ID' }, { status: 400 });
+      return Response.json({ message: 'Invalid category ID' }, { status: 400 });
     }
 
     const { name, description } = await req.json();
 
-    const category = await Category.findById(id);
-    if (!category) {
-      return NextResponse.json({ message: 'Category not found' }, { status: 404 });
+    const newEditCategory = await Category.findByIdAndUpdate(id, { 
+      name : name, 
+      description : description
+    }, { new: true });
+    if (!newEditCategory) {
+      return Response.json({ 
+        message: 'Category not found' 
+      }, { status: 404 });
     }
 
-    // Update only provided fields
-    if (name) category.name = name;
-    if (description) category.description = description;
-
-    await category.save();
-    return NextResponse.json({ message: 'Category updated successfully' }, { status: 200 });
+    return Response.json({ 
+      message: 'Category updated successfully',
+      data: newEditCategory
+    }, { status: 200 });
   } catch (error) {
     console.error('Error updating category:', error);
-    return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
+    return Response.json({ 
+      message: 'Something went wrong' 
+    }, { status: 500 });
   }
 }
