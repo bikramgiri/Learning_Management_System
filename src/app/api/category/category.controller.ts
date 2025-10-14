@@ -8,8 +8,8 @@ export async function createCategory(req: Request) {
   try {
     await connectDB();
 
-    const authResponse = await authMiddleware(req as NextRequest);
-    if(authResponse) return authResponse;
+    // const authResponse = await authMiddleware(req as NextRequest);
+    // if(authResponse) return authResponse;
 
     const { name, description } = await req.json();
     // Already exists or not

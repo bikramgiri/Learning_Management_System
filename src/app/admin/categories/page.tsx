@@ -49,14 +49,14 @@ return(
         </div>
         <div className="flex justify-between">
           <input type="text" id="default-search" className="block w-80 h-11 pr-5 pl-12 py-2.5 text-base font-normal shadow-xs text-gray-900 bg-transparent border border-gray-300 rounded-full placeholder-gray-400 focus:outline-none" placeholder="Search category" />
-          <button onClick={openModal} className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"> Add Category </button>
+          <button onClick={openModal} className="cursor-pointer flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"> Add Category </button>
         </div>
       </div>
       <div className="overflow-hidden ">
         <table className=" min-w-full rounded-xl">
           <thead className="border-b-2 border-gray-400">
             <tr className="bg-gray-50">
-              <th scope="col" className="p-5 text-left text-sm leading-6 font-semibold text-gray-900 capitalize rounded-t-xl"> Category ID </th>
+              <th scope="col" className="p-5 text-left text-sm leading-6 font-semibold text-gray-900 capitalize rounded-t-xl"> ID </th>
               <th scope="col" className="p-5 text-left text-sm leading-6 font-semibold text-gray-900 capitalize"> Name </th>
               <th scope="col" className="p-5 text-left text-sm leading-6 font-semibold text-gray-900 capitalize"> Description </th>
               <th scope="col" className="p-5 text-left text-sm leading-6 font-semibold text-gray-900 capitalize"> Created At </th>
