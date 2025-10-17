@@ -1,32 +1,21 @@
 "use client"
 import { useEffect, useState } from "react";
-import { ICategory } from "@/database/models/category.schema";
 import Modal from "../components/modal/Modal";
-
-async function fetchCategories() {
-  try {
-    const response = await fetch('http://localhost:3000/api/category');
-    if (!response.ok) throw new Error('Failed to fetch categories, Something went wrong');
-    return response.json();
-  } catch (error) {
-    console.error(error);
-  }
-}
+import { fetchCategories } from "@/store/category/categorySlice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 
  function Categories(){
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [categories, setCategories] = useState([])
+  const dispatch = useAppDispatch();
+  const {categories} = useAppSelector((store) => store.categories);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-  console.log(isModalOpen)
+  console.log(isModalOpen);
+
   useEffect(()=>{
-    const getCategories = async ()=>{
-      const {data} = await fetchCategories()
-      setCategories(data)
-    }
-    getCategories()
-  },[])
+    dispatch(fetchCategories())
+  },[dispatch])
 
   // function to format date like wednesday, 22 march 2023
   const formatDate = (dateString: string) => {
@@ -64,7 +53,7 @@ return(
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-300 ">
-            { categories.length > 0 && categories.map((category: ICategory)=>{
+            { categories.length > 0 && categories.map((category)=>{
               return(
               <tr key={category._id} className="bg-white transition-all duration-500 hover:bg-gray-50">
               <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900 "> {category._id}</td>

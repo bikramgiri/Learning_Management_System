@@ -1,6 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { ICategoryInitialState } from "./types";
 import { STATUSES } from "@/global/statuses";
+import { AppDispatch } from "../store";
+import API from "@/http";
 
 const datas: ICategoryInitialState = {
       categories: [],
@@ -29,9 +31,22 @@ const categorySlice = createSlice({
 export const { addCategory, removeCategory, setStatus, setCategories } = categorySlice.actions;
 export default categorySlice.reducer;
 
-
-
-
-
+export function fetchCategories() {
+      return async function fetchCategoryThunk(dispatch: AppDispatch) {
+            dispatch(setStatus(STATUSES.LOADING));
+            try {
+                  const response = await API.get("/category");
+                  if(response.status === 200){
+                        // dispatch(setStatus(STATUSES.SUCCESS));
+                        dispatch(setCategories(response.data.data));
+                  } else {
+                        dispatch(setStatus(STATUSES.ERROR));
+                  }
+            } catch (error) {
+                  console.error("Error fetching categories:", error);
+                  dispatch(setStatus(STATUSES.ERROR));
+            }
+      };
+}
 
 
