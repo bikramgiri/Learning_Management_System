@@ -13,22 +13,28 @@ const categorySlice = createSlice({
       name: "category",
       initialState: datas,
       reducers: {
-            addCategory: (state, action) => {
-                  state.categories.push(action.payload);
-            },
-            removeCategory: (state, action) => {
-                  state.categories = state.categories.filter(category => category.id !== action.payload.id);
-            },
             setStatus: (state, action) => {
                   state.status = action.payload;
             },
             setCategories: (state, action) => {
                   state.categories = action.payload;
-            }
+            },
+            reSetStatus: (state) => {
+                  state.status = STATUSES.LOADING;
+            },
+            addCategory: (state, action) => {
+                  state.categories.push(action.payload);
+            },
+            removeCategory: (state, action) => {
+                  const index = state.categories.findIndex((category) => category._id == action.payload);
+                  if (index !== -1) {
+                        state.categories.splice(index, 1);
+                  }
+            },
       }
 });
 
-export const { addCategory, removeCategory, setStatus, setCategories } = categorySlice.actions;
+export const { addCategory, removeCategory, setStatus, setCategories, reSetStatus } = categorySlice.actions;
 export default categorySlice.reducer;
 
 export function fetchCategories() {
@@ -49,4 +55,35 @@ export function fetchCategories() {
       };
 }
 
+export function createCategory(data:{name:string, description:string}) {
+      return async function addCategoryThunk(dispatch: AppDispatch) {
+            try {
+                  const response = await API.post("/category", data);
+                  if(response.status === 201){
+                        dispatch(setStatus(STATUSES.SUCCESS));
+                        dispatch(addCategory(response.data.data));
+                  }else{
+                        dispatch(setStatus(STATUSES.ERROR));
+                  }
+            } catch (error) {
+                  console.error("Error adding category:", error);
+                  dispatch(setStatus(STATUSES.ERROR));
+            }
+      };
+}
+
+export function deleteCategory(id:string) {
+      return async function deleteCategoryThunk(dispatch: AppDispatch) {
+            try {
+                  const response = await API.delete(`/category/${id}`);
+                  if(response.status === 200){
+                        dispatch(removeCategory(id));
+                        dispatch(setStatus(STATUSES.SUCCESS));
+                  }
+            } catch (error) {
+                  console.error("Error deleting category:", error);
+                  dispatch(setStatus(STATUSES.ERROR));
+            }
+      };
+}
 

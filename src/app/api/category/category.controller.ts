@@ -90,11 +90,11 @@ export async function deleteCategory(req: NextRequest, id: string | undefined) {
   try {
       await connectDB();
 
-    // Run authentication middleware
-    const authResponse = await authMiddleware(req as NextRequest);
-    if (authResponse) {
-      return authResponse; // Return 401/403 if auth fails
-    }
+    // // Run authentication middleware
+    // const authResponse = await authMiddleware(req as NextRequest);
+    // if (authResponse) {
+    //   return authResponse; // Return 401/403 if auth fails
+    // }
 
     // // Check if user is logged in
     // const loggedInResponse = checkLoggedInOrNot();
@@ -134,9 +134,9 @@ export async function updateCategory(req: Request, id: string | undefined) {
   try {
     await connectDB();
 
-    // Run authentication middleware
-    const authResponse = await authMiddleware(req as NextRequest);
-    if (authResponse) return authResponse; // Return 401/403 if auth fails
+    // // Run authentication middleware
+    // const authResponse = await authMiddleware(req as NextRequest);
+    // if (authResponse) return authResponse; // Return 401/403 if auth fails
 
     // const id = getIdFromRequest(req);
 

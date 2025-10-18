@@ -1,8 +1,8 @@
 "use client";
-// import { createCategory, resetStatus } from "@/store/category/categorySlice"
-// import { Status } from "@/store/category/types"
-// import { useAppDispatch, useAppSelector } from "@/store/hooks"
-import { ChangeEvent, useState } from "react";
+import { STATUSES } from "@/global/statuses";
+import { createCategory, reSetStatus } from '@/store/category/categorySlice';
+import { useAppDispatch, useAppSelector } from "@/store/hooks"
+import { ChangeEvent, useEffect, useState } from "react";
 
 interface IModalProps {
   closeModal: () => void;
@@ -12,43 +12,21 @@ const Modal: React.FC<IModalProps> = ({ closeModal }) => {
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [loading, setLoading] = useState(false);
-  // const dispatch = useAppDispatch()
-  // const {status} = useAppSelector((store)=>store.categories)
+  const dispatch = useAppDispatch()
+  const {status} = useAppSelector((store)=>store.categories)
 
-  // const handleSubmit = async (e:ChangeEvent<HTMLFormElement>)=>{
-  //   e.preventDefault()
-  //   setLoading(true)
-  //   dispatch(createCategory({name,description}))
-  // }
-  // useEffect(()=>{
-  //   if(status === Status.Success){
-  //     setLoading(false)
-  //     closeModal();
-  //     dispatch(resetStatus())
-  //   }
-  // },[status])
-
-  const handleSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const response = await fetch("/api/category", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, description }),
-      });
-      if (response.ok) {
-        console.log("Category created successfully");
-      }
+  const handleSubmit = async (e:ChangeEvent<HTMLFormElement>)=>{
+    e.preventDefault()
+    setLoading(true)
+    dispatch(createCategory({name,description}))
+  }
+  useEffect(()=>{
+    if(status === STATUSES.SUCCESS){
+      setLoading(false)
       closeModal();
-    } catch (error) {
-      console.error("Error creating category:", error);
-    } finally {
-      setLoading(false);
+      dispatch(reSetStatus())
     }
-  };
+  },[status,closeModal,dispatch])
 
   return (
     <div
