@@ -1,15 +1,15 @@
 import { NextRequest } from "next/server";
-import { createCategory, getCategories } from "./category.controller";
 import connectDB from "@/database/connection";
+import { enrollCourse, getEnrollments } from "./enrollment.controller";
 
-// *Add a new category
+// *Add lesson
 export async function POST(req: NextRequest) {
       await connectDB();
-      return createCategory(req);
+      return enrollCourse(req);
 }
 
-// *Get all categories
+// *Get all lessons
 export async function GET() {
       await connectDB();
-      return getCategories();
+      return getEnrollments();
 }

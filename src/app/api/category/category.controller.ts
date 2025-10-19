@@ -12,7 +12,18 @@ export async function createCategory(req: Request) {
     // if(authResponse) return authResponse;
 
     const { name, description } = await req.json();
-    // Already exists or not
+
+    // validate name and description
+    if (!name || !description) {
+      return Response.json(
+        {
+          message: "Name and description are required",
+        },
+        { status: 400 }
+      );
+    }
+
+        // Already exists or not
     const existingCategory = await Category.findOne({ name: name });
     if (existingCategory) {
       return Response.json(
@@ -22,6 +33,17 @@ export async function createCategory(req: Request) {
         { status: 400 }
       );
     }
+
+    // validate description length
+    if (description.length < 5) {
+      return Response.json(
+        {
+          message: "Description must be at least 5 characters long",
+        },
+        { status: 400 }
+      );
+    }
+
     const category = await Category.create({
       name: name,
       description: description,
@@ -103,7 +125,8 @@ export async function deleteCategory(req: NextRequest, id: string | undefined) {
     // }
 
     // const id = getIdFromRequest(req);
-
+    
+    // Validate ID format
     if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) {
       return NextResponse.json({ message: 'Invalid category ID' }, { status: 400 });
     }
@@ -146,11 +169,40 @@ export async function updateCategory(req: Request, id: string | undefined) {
 
     const { name, description } = await req.json();
 
-    const newEditCategory = await Category.findByIdAndUpdate(id, { 
+    // Validate name and description
+    if (!name || !description) {
+      return Response.json({ 
+        message: 'Name and description are required' 
+      }, { status: 400 });
+    }
+
+    // Category name already exists or not
+    const existingCategory = await Category.findOne({ name });
+    if (existingCategory) {
+      return Response.json({ 
+        message: 'Category with this name already exists' 
+      }, { status: 400 });
+    }
+
+    // Validate name length
+    if (name.length < 2) {
+      return Response.json({ 
+        message: 'Name must be at least 2 characters long' 
+      }, { status: 400 });
+    }
+
+    // Validate description length
+    if (description.length < 5) {
+      return Response.json({ 
+        message: 'Description must be at least 5 characters long' 
+      }, { status: 400 });
+    }
+
+    const updatedCategory = await Category.findByIdAndUpdate(id, { 
       name : name, 
       description : description
     }, { new: true });
-    if (!newEditCategory) {
+    if (!updatedCategory) {
       return Response.json({ 
         message: 'Category not found' 
       }, { status: 404 });
@@ -158,7 +210,7 @@ export async function updateCategory(req: Request, id: string | undefined) {
 
     return Response.json({ 
       message: 'Category updated successfully',
-      data: newEditCategory
+      data: updatedCategory
     }, { status: 200 });
   } catch (error) {
     console.error('Error updating category:', error);

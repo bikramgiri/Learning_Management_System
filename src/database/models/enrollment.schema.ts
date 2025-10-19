@@ -1,8 +1,15 @@
 import mongoose, {Schema} from "mongoose";
 
+enum EnrollmentStatus {
+      Approved = 'approved',
+      Rejected = 'rejected',
+      Pending = 'pending'
+}
 interface IEnrollment extends Document{
       student: mongoose.Types.ObjectId;
       course: mongoose.Types.ObjectId;
+      enrollmentStatus: EnrollmentStatus;
+      whatsapp: string;
       enrolledAt: Date;
 }
 
@@ -14,6 +21,15 @@ const enrollmentSchema = new Schema<IEnrollment>({
       course: {
             type: Schema.Types.ObjectId,
             ref: "Course"
+      },
+      enrollmentStatus: {
+            type: String,
+            enum: [EnrollmentStatus.Approved, EnrollmentStatus.Rejected, EnrollmentStatus.Pending],
+            default: EnrollmentStatus.Pending
+      },
+      whatsapp: {
+            type: String,
+            required: true
       },
       enrolledAt: {
             type: Date,
