@@ -8,8 +8,9 @@ export async function createCategory(req: Request) {
   try {
     await connectDB();
 
-    // const authResponse = await authMiddleware(req as NextRequest);
-    // if(authResponse) return authResponse;
+    const authResponse = await authMiddleware(req as NextRequest);
+    console.log("Auth Response in createCategory:", authResponse);
+    if(authResponse.status == 401) return authResponse;
 
     const { name, description } = await req.json();
 
@@ -112,11 +113,8 @@ export async function deleteCategory(req: NextRequest, id: string | undefined) {
   try {
       await connectDB();
 
-    // // Run authentication middleware
-    // const authResponse = await authMiddleware(req as NextRequest);
-    // if (authResponse) {
-    //   return authResponse; // Return 401/403 if auth fails
-    // }
+    const authResponse = await authMiddleware(req as NextRequest);
+    if(authResponse.status == 401) return authResponse;
 
     // // Check if user is logged in
     // const loggedInResponse = checkLoggedInOrNot();
@@ -157,10 +155,9 @@ export async function updateCategory(req: Request, id: string | undefined) {
   try {
     await connectDB();
 
-    // // Run authentication middleware
-    // const authResponse = await authMiddleware(req as NextRequest);
-    // if (authResponse) return authResponse; // Return 401/403 if auth fails
-
+    const authResponse = await authMiddleware(req as NextRequest);
+    if(authResponse.status == 401) return authResponse;
+    
     // const id = getIdFromRequest(req);
 
     if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) {

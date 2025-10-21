@@ -17,8 +17,7 @@ const courseSchema = new Schema<ICourse>({
       required: true 
   },
   featureImage: {
-      type: String,
-      required: true
+      type: String
   },
   description: { 
       type: String, 

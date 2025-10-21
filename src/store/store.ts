@@ -1,12 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import categorySlice from "./category/categorySlice";
 import paymentSlice from "./payment/paymentSlice";
+import courseSlice from "./course/courseSlice";
 
 export const makeStore = () =>{
       return configureStore({
       reducer: {
             categories: categorySlice,
-            payment: paymentSlice
+            payment: paymentSlice,
+            courses: courseSlice,
       }
 });
 }

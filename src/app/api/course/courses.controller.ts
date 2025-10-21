@@ -30,6 +30,16 @@ export async function createCourse(req: Request) {
       );
     }
 
+    // validate title length
+    if (title.length < 2) {
+      return Response.json(
+        {
+          message: "Title must be at least 2 characters long",
+        },
+        { status: 400 }
+      );
+    }
+
     // validate description length
     if (description.length < 5) {
       return Response.json(
@@ -40,12 +50,12 @@ export async function createCourse(req: Request) {
       );
     }
 
-    // validate duration format (e.g., "5 hours", "30 minutes", "5 hours 15 minutes")
-    const durationRegex = /^\d+\s(hours|hour|minutes|minute)(\s\d+\s(minutes|minute))?$/;
+    // validate duration format (e.g., "30 Days", "1 Day", "5 hours 15 minutes")
+    const durationRegex = /^\d+\s(days|day|hours|hour|minutes|minute)(\s\d+\s(minutes|minute))?$/;
     if (!durationRegex.test(duration)) {
       return Response.json(
         {
-          message: "Duration must be a valid format (e.g., '5 hours', '30 minutes', '5 hours 15 minutes')",
+          message: "Invalid duration format",
         },
         { status: 400 }
       );
@@ -253,12 +263,12 @@ export async function updateCourse(req: Request, id: string | undefined) {
       );
     }
 
-    // Validate duration format (e.g., "5 hours", "30 minutes", "5 hours 15 minutes")
-    const durationRegex = /^\d+\s(hours|hour|minutes|minute)(\s\d+\s(minutes|minute))?$/;
+    // validate duration format (e.g., "30 Days", "1 Day", "5 hours 15 minutes")
+    const durationRegex = /^\d+\s(days|day|hours|hour|minutes|minute)(\s\d+\s(minutes|minute))?$/;
     if (!durationRegex.test(duration)) {
       return Response.json(
         {
-          message: "Invalid duration format"
+          message: "Invalid duration format",
         },
         { status: 400 }
       );

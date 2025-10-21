@@ -1,7 +1,7 @@
 // First: check whether user is logged in or not
 // Then: check whether user is admin or not
 
-// import { Role } from "@/database/models/user.schema";
+import { Role } from "@/database/models/user.schema";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
@@ -16,16 +16,16 @@ const authMiddleware = async (req: NextRequest) => {
 //   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 //   console.log('Token in auth middleware:', token);
       // check whether user is logged in or not
-      if(!session){
-            return NextResponse.json(
-                  {
-                    message: "You must be logged in to perform this action"
-                  },
-                  {status: 401}
-            );
-      }
-      //  return null;
-      return NextResponse.next();
+      // if(!session){
+      //       return NextResponse.json(
+      //             {
+      //               message: "You must be logged in to perform this action"
+      //             },
+      //             {status: 401}
+      //       );
+      // }
+      // //  return null;
+      // return NextResponse.next();
 
       // // check whether user is admin or not
       // if(session.user.role !== Role.Admin){
@@ -39,17 +39,16 @@ const authMiddleware = async (req: NextRequest) => {
       // return NextResponse.next();
       
       // *Combining both checks
-      // //check whether user is logged in or not and also check whether user is admin or not
-      // if(!session || session.user.role !== Role.Admin){
-      //       return NextResponse.json(
-      //             {
-      //                   message: "You must be logged in as an admin to perform this action"
-      //             },
-      //             {status: 401}
-      //       );
-      // }
+      if(!session || session.user.role !== Role.Admin){
+            return NextResponse.json(
+                  {
+                        message: "You must be logged in as an admin to perform this action"
+                  },
+                  {status: 401}
+            );
+      }
 
-      // return NextResponse.next();
+      return NextResponse.next();
 }
 
 // const checkLoggedInOrNot = async (req: NextRequest) => {
