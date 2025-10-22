@@ -6,7 +6,8 @@ export interface IStudent{
     username : string, 
     profileImage : string, 
     email : string, 
-    role : Role
+    role : Role,
+    createdAt : string,
 }
 export interface IStudentInitialData{
     status : typeof STATUSES[keyof typeof STATUSES], 

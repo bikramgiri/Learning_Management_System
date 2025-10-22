@@ -3,6 +3,7 @@ import categorySlice from "./category/categorySlice";
 import paymentSlice from "./payment/paymentSlice";
 import courseSlice from "./course/courseSlice";
 import lessonSlice from "./lesson/lessonSlice";
+import studentSlice from "./student/studentSlice";
 
 export const makeStore = () =>{
       return configureStore({
@@ -11,6 +12,7 @@ export const makeStore = () =>{
             payment: paymentSlice,
             courses: courseSlice,
             lessons: lessonSlice,
+            students: studentSlice
       }
 });
 }
