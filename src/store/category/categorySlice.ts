@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { ICategoryInitialState } from "./types";
+import { ICategoryForData, ICategoryInitialState } from "./types";
 import { STATUSES } from "@/global/statuses";
 import { AppDispatch } from "../store";
 import API from "@/http";
@@ -43,7 +43,6 @@ export function fetchCategories() {
             try {
                   const response = await API.get("/category");
                   if(response.status === 200){
-                        // dispatch(setStatus(STATUSES.SUCCESS));
                         dispatch(setCategories(response.data.data));
                   } else {
                         dispatch(setStatus(STATUSES.ERROR));
@@ -55,7 +54,7 @@ export function fetchCategories() {
       };
 }
 
-export function createCategory(data:{name:string, description:string}) {
+export function createCategory(data:ICategoryForData) {
       return async function addCategoryThunk(dispatch: AppDispatch) {
             try {
                   const response = await API.post("/category", data);

@@ -1,19 +1,18 @@
 import { STATUSES } from "@/global/statuses";
-import { ICategory } from "../category/types";
-
 export interface ICourseForData {
-  _id : string;
   title : string;
   featureImage ?: string;
   description : string;
   duration : string;
   price : number;
-  category : ICategory;
-//  category : string
+  category : string;
+  // category : ICategory;
 }
 
 export interface ICourse extends ICourseForData{
     createdAt : string;
+    _id : string;
+    // category : ICategory;
 }
 
 export interface ICourseInitialState {

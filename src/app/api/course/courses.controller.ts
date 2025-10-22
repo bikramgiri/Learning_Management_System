@@ -2,7 +2,6 @@ import connectDB from "@/database/connection";
 import Course from "@/database/models/course.schema";
 import Lesson from "@/database/models/lesson.schema";
 
-
 // *Add a new course
 export async function createCourse(req: Request) {
   try {
@@ -62,33 +61,35 @@ export async function createCourse(req: Request) {
     }
 
     // validate price
-      if (price < 0) {
+      if (price < 100) {
       return Response.json(
         {
-          message: "Price must be a positive number",
+          message: "Price must be at least 100",
         },
         { status: 400 }
       );
     }
 
-    // validate category is a valid ObjectId
-    if (!category.match(/^[0-9a-fA-F]{24}$/)) {
-      return Response.json(
-        {
-          message: "Invalid category ID",
-        },
-        { status: 400 }
-      );
-    }
+    // // validate category is a valid ObjectId
+    // if (!category.match(/^[0-9a-fA-F]{24}$/)) {
+    //   return Response.json(
+    //     {
+    //       message: "Invalid category ID",
+    //     },
+    //     { status: 400 }
+    //   );
+    // }
 
-    const course = await Course.create({
+    const createdCourse = await Course.create({
       title,
       description,
       duration,
       price,
       category
     });
-
+    // populate category name only on createdCourse
+    const course = await createdCourse.populate("category", "name");
+    
     return Response.json(
       {
         message: "Course created successfully",

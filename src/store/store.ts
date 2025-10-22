@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import categorySlice from "./category/categorySlice";
 import paymentSlice from "./payment/paymentSlice";
 import courseSlice from "./course/courseSlice";
+import lessonSlice from "./lesson/lessonSlice";
 
 export const makeStore = () =>{
       return configureStore({
@@ -9,6 +10,7 @@ export const makeStore = () =>{
             categories: categorySlice,
             payment: paymentSlice,
             courses: courseSlice,
+            lessons: lessonSlice,
       }
 });
 }

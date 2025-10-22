@@ -1,33 +1,32 @@
 "use client";
 import { STATUSES } from "@/global/statuses";
-import { fetchCategories } from "@/store/category/categorySlice";
-import { createCourse, reSetStatus } from "@/store/course/courseSlice";
-import { ICourse } from "@/store/course/types";
+import { fetchCourse } from "@/store/course/courseSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { createLesson, reSetStatus } from "@/store/lesson/lessonSlice";
+import { ILessonForData } from "@/store/lesson/types";
+import { useParams } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
-import { ICategory } from "@/store/category/types";
 
 interface IModalProps {
   closeModal: () => void;
+  courseId: string;
 }
 
-const Modal: React.FC<IModalProps> = ({ closeModal }) => {
+const Modal: React.FC<IModalProps> = ({ closeModal, courseId }) => {
   const [loading, setLoading] = useState(false);
   const dispatch = useAppDispatch();
+  const { status } = useAppSelector((store) => store.lessons);
+  const { courses } = useAppSelector((store) => store.courses);
+  const { id } = useParams<{ id: string }>();
 
-  const { categories } = useAppSelector((store) => store.categories);
-  const { status } = useAppSelector((store) => store.courses);
-
-  const [data, setData] = useState<ICourse>({
+  const [data, setData] = useState<ILessonForData>({
     title: "",
-    featureImage: "",
     description: "",
-    price: 0,
-    duration: "",
-    category: "",
+    videoUrl: "",
+    course: courseId
   });
 
-  const handleChange = async (
+  const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     e.preventDefault();
@@ -38,17 +37,16 @@ const Modal: React.FC<IModalProps> = ({ closeModal }) => {
     });
   };
 
-  useEffect(() => {
-    if (categories.length === 0) {
-      dispatch(fetchCategories());
-    }
-  }, [categories.length, dispatch]);
+    useEffect(() => {
+    dispatch(fetchCourse(id));
+  }, [id, dispatch]);
 
-  const createCourseHandle = (e: ChangeEvent<HTMLFormElement>) => {
+  const createLessonHandle = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
-    dispatch(createCourse(data));
+    // setLoading(true);
+    dispatch(createLesson(data));
   };
+
   useEffect(() => {
     if (status === STATUSES.SUCCESS) {
       setLoading(false);
@@ -60,13 +58,13 @@ const Modal: React.FC<IModalProps> = ({ closeModal }) => {
   return (
     <div
       id="modal"
-      className="fixed inset-0 z-50 flex items-center justify-center"
+      className="mt-26 fixed inset-0 z-50 flex items-center justify-center"
     >
       <div className="fixed inset-0 bg-black/50" />
       <div className="relative w-full max-w-md p-6 bg-white dark:bg-gray-800 rounded-lg shadow-xl">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Add Course
+            Add Lesson of {courses[0]?.title}
           </h3>
           <button
             onClick={closeModal}
@@ -92,7 +90,7 @@ const Modal: React.FC<IModalProps> = ({ closeModal }) => {
           </button>
         </div>
         <div className="space-y-4">
-          <form onSubmit={createCourseHandle}>
+          <form onSubmit={createLessonHandle}>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Title
@@ -103,47 +101,27 @@ const Modal: React.FC<IModalProps> = ({ closeModal }) => {
                 type="text"
                 id="course_title"
                 className="w-full mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
-                placeholder="Next.js, AI"
+                placeholder="Enter lesson title"
                 required
               />
             </div>
-            <div className="flex justify-between gap-4">
               {/* Course Duration */}
               <div className="mt-2">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Duration
+                  Video URL
                 </label>
                 <input
                   onChange={handleChange}
-                  name="duration"
-                  type="text"
-                  id="course_duration"
+                  name="videoUrl"
+                  type="url"
+                  id="lesson_videoUrl"
                   className="w-full mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
-                  placeholder="30 Days"
+                  placeholder="Enter video URL"
                   required
                 />
               </div>
-              {/* Course Price */}
-              <div className="mt-2">
-                <label
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  htmlFor="course_price"
-                >
-                  Price
-                </label>
-                <input
-                  onChange={handleChange}
-                  name="price"
-                  type="text"
-                  id="course_price"
-                  className="w-full mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
-                  placeholder="Rs. 999"
-                  required
-                />
-              </div>
-            </div>
             {/* Select Category */}
-            <div className="mt-2">
+            {/* <div className="mt-2">
               <label
                 htmlFor="course_category"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -160,7 +138,7 @@ const Modal: React.FC<IModalProps> = ({ closeModal }) => {
                 {categories.length > 0 ? (
                   categories.map((category) => {
                     return (
-                      <option key={category._id} value={category._id}>
+                      <option key={category._id} value={category._id} className="">
                         {category.name}
                       </option>
                     );
@@ -171,7 +149,7 @@ const Modal: React.FC<IModalProps> = ({ closeModal }) => {
                   </option>
                 )}
               </select>
-            </div>
+            </div> */}
 
             {/* // description */}
             <div className="mt-2">
@@ -179,11 +157,11 @@ const Modal: React.FC<IModalProps> = ({ closeModal }) => {
                 htmlFor="course_description"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Course Description
+                Lesson Description
               </label>
               <textarea
                 onChange={handleChange}
-                id="course_description"
+                id="lesson_description"
                 name="description"
                 className="w-full mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
                 placeholder="Enter description..."

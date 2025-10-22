@@ -22,7 +22,7 @@ const courseSlice = createSlice({
             reSetStatus: (state) => {
                   state.status = STATUSES.LOADING;
             },
-            addCourse: (state, action) => {
+            addCourse: (state: ICourseInitialState, action: PayloadAction<ICourse>) => {
                   state.courses.push(action.payload);
             },
             removeCourse: (state: ICourseInitialState, action: PayloadAction<string>) => {
@@ -43,7 +43,6 @@ export function fetchCourses() {
             try {
                   const response = await API.get("/course");
                   if(response.status === 200){
-                        // dispatch(setStatus(STATUSES.SUCCESS));
                         dispatch(setCourses(response.data.data));
                   } else {
                         dispatch(setStatus(STATUSES.ERROR));
@@ -62,7 +61,7 @@ export function fetchCourse(id:string) {
             try {
                   const response = await API.get(`/course/${id}`);
                   if(response.status === 200){
-                        dispatch(setStatus(STATUSES.SUCCESS));
+                        // dispatch(setStatus(STATUSES.SUCCESS));
                         dispatch(setCourses([response.data.data]));
                   } else {
                         dispatch(setStatus(STATUSES.ERROR));
@@ -81,7 +80,7 @@ export function createCourse(data: ICourseForData) {
                   if(response.status === 201){
                         dispatch(setStatus(STATUSES.SUCCESS));
                         dispatch(addCourse(response.data.data));
-                        dispatch(fetchCourses());
+                        // dispatch(fetchCourses());
                   }else{
                         dispatch(setStatus(STATUSES.ERROR));
                   }

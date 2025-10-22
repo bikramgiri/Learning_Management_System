@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
 }
 
 // *Get all lessons
-export async function GET() {
+export async function GET(req: NextRequest) {
       await connectDB();
-      return getLessons();
+      return getLessons(req);
 }

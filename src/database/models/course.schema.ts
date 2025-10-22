@@ -1,8 +1,7 @@
 import mongoose, {Schema} from "mongoose";
-
 interface ICourse extends Document{
   title : string;
-  featureImage: string;
+  featureImage?: string;
   description : string;
   duration : string;
   price : number;

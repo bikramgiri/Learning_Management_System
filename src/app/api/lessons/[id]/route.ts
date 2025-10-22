@@ -5,7 +5,8 @@ import connectDB from "@/database/connection";
 // *Get lesson by ID
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
       await connectDB();
-      return getLesson(params.id);
+      const {id} = await params;
+      return getLesson(id);
 }
 
 // *Delete a lesson

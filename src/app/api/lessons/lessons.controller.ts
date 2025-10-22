@@ -49,16 +49,16 @@ export async function createLesson(req: Request) {
       );
     }
 
-    // validate videoUrl format (basic URL validation)
-    const urlRegex = /^(https?:\/\/)?([\w\-])+\.{1}([a-zA-Z]{2,63})([\/\w\-\.\?=&%]*)*\/?$/;
-    if (!urlRegex.test(videoUrl)) {
-      return Response.json(
-        {
-          message: "Invalid video URL"
-        },
-        { status: 400 }
-      );
-    }
+    // // validate videoUrl format (basic URL validation)
+    // const urlRegex = /^(https?:\/\/)?([\w\-])+\.{1}([a-zA-Z]{2,63})([\/\w\-\.\?=&%]*)*\/?$/;
+    // if (!urlRegex.test(videoUrl)) {
+    //   return Response.json(
+    //     {
+    //       message: "Invalid video URL"
+    //     },
+    //     { status: 400 }
+    //   );
+    // }
 
     // validate videoUrl already exists or not
     const existingVideo = await Lesson.findOne({ videoUrl });
@@ -71,12 +71,13 @@ export async function createLesson(req: Request) {
       );
     }
 
-    const lesson = await Lesson.create({
+    const createdLesson = await Lesson.create({
       course,
       title,
       description,
       videoUrl
     });
+    const lesson = await createdLesson.populate("course", "title");
 
     return Response.json(
       {
@@ -97,10 +98,11 @@ export async function createLesson(req: Request) {
 }
 
 // *Get all lessons
-export async function getLessons() {
+export async function getLessons(req: Request) {
   try {
     await connectDB();
-
+    // const {searchParams} = new URL(req.url)
+    // const courseId = searchParams.get("courseId")
     const lessons = await Lesson.find().populate("course");
     if (lessons.length === 0) {
       return Response.json(
@@ -133,12 +135,12 @@ export async function getLesson(id: string | undefined) {
   try {
     await connectDB();
 
-    // Validate ID format
-    if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) {
-      return Response.json({ message: "Invalid lesson ID" }, { status: 400 });
-    }
+    // // Validate ID format
+    // if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) {
+    //   return Response.json({ message: "Invalid lesson ID" }, { status: 400 });
+    // }
 
-    const lesson = await Lesson.findById(id);
+    const lesson = await Lesson.findById(id).populate("course");
     if (!lesson) {
       return Response.json({ message: "Lesson not found" }, { status: 404 });
     }
