@@ -101,13 +101,23 @@ export async function createLesson(req: Request) {
 export async function getLessons(req: Request) {
   try {
     await connectDB();
-    // const {searchParams} = new URL(req.url)
-    // const courseId = searchParams.get("courseId")
-    const lessons = await Lesson.find().populate("course");
+    // fetch courseId from query params
+    const {searchParams} = new URL(req.url);
+    const courseId = searchParams.get("courseId");
+    if(!courseId){
+      return Response.json(
+        {
+          message: "Course ID is required"
+        },
+        { status: 400 }
+      );
+    }
+    const lessons = await Lesson.find({ course: courseId }).populate("course");
     if (lessons.length === 0) {
       return Response.json(
         {
-          message: "No lessons found"
+          message: "No lessons found",
+          data: []
         },
         { status: 404 }
       );

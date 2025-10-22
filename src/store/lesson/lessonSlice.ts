@@ -31,23 +31,31 @@ const lessonSlice = createSlice({
                         state.lessons.splice(index, 1);
                   }
             },
+            reSetLessonsArray: (state: ILessonInitialState) => {
+                  state.lessons = [];
+            }
       }
 });
 
-export const { addLesson, removeLesson, setStatus, setLessons, reSetStatus } = lessonSlice.actions;
+export const { addLesson, removeLesson, setStatus, setLessons, reSetStatus, reSetLessonsArray } = lessonSlice.actions;
 export default lessonSlice.reducer;
 
-export function fetchLessons() {
+export function fetchLessons(id:string) {
       return async function fetchLessonThunk(dispatch: AppDispatch) {
             dispatch(setStatus(STATUSES.LOADING));
             try {
-                  const response = await API.get('/lessons');
+                  const response = await API.get(`/lessons?courseId=${id}`);
                   if(response.status === 200){
                         dispatch(setLessons(response.data.data));
                   } else {
+                        dispatch(setLessons([]));
+                        // dispatch(reSetLessonsArray());
+                        // dispatch(response.data.data)
                         dispatch(setStatus(STATUSES.ERROR));
                   }
             } catch (error) {
+                  dispatch(setLessons([]));
+                  // dispatch(reSetLessonsArray());
                   console.error("Error fetching lessons:", error);
                   dispatch(setStatus(STATUSES.ERROR));
             }

@@ -4,14 +4,13 @@ import Modal from "./components/courseModal";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { deleteCourse, fetchCourses } from "@/store/course/courseSlice";
 import { redirect, useParams } from "next/navigation";
-import { ICategory } from "@/store/category/types";
 
  function Courses(){
     const data = useParams()
     const categoryId = data.id
   const [isModalOpen, setIsModalOpen] = useState(false);
   const dispatch = useAppDispatch();
-  const {courses} = useAppSelector((store) => store.courses);
+  const {courses, status} = useAppSelector((store) => store.courses);
   const [searchTerm,setSearchTerm] = useState<string>("")
 
   const openModal = useCallback( () => setIsModalOpen(true),[])
@@ -128,10 +127,17 @@ return(
             })
             ) : (
               <tr>
-                <td className="p-5 text-center text-sm leading-6 font-medium text-gray-900 ">
-                  No courses available.
-                </td>
+                {status === 'loading' ? (
+                  <td className="p-5 text-center text-sm leading-6 font-medium text-gray-900 " colSpan={8}> Loading courses... </td>
+                ) : (
+                  <td className="p-5 text-center text-sm leading-6 font-medium text-gray-900 " colSpan={8}> No courses available! </td>
+                )}
               </tr>
+              // <tr className="flex items-center justify-center py-40">
+              //   <td className="mt-4 text-xl text-gray-500">
+              //     No courses available!
+              //   </td>
+              // </tr>
             )}
           </tbody>
         </table>
