@@ -1,6 +1,7 @@
 import connectDB from "@/database/connection";
 import Course from "@/database/models/course.schema";
 import Lesson from "@/database/models/lesson.schema";
+import mongoose from "mongoose";
 
 // *Add a new course
 export async function createCourse(req: Request) {
@@ -8,15 +9,15 @@ export async function createCourse(req: Request) {
     await connectDB();
 
     const { title, description, duration, price, category } = await req.json();
-    // validate request body
-    if (!title || !description || !duration || !price || !category) {
-      return Response.json(
-        {
-          message: "All fields are required",
-        },
-        { status: 400 }
-      );
-    }
+    // // validate request body
+    // if (!title || !description || !duration || !price || !category) {
+    //   return Response.json(
+    //     {
+    //       message: "All fields are required",
+    //     },
+    //     { status: 400 }
+    //   );
+    // }
 
     // validate title already exists
     const existingCourse = await Course.findOne({ title });
@@ -112,7 +113,7 @@ export async function createCourse(req: Request) {
 export async function getCourses() {
   try {
     await connectDB();
-
+    console.log(mongoose.models.category, "<-- Mongoose Category Model");
     const courses = await Course.find().populate("category");
     if (courses.length === 0) {
       return Response.json(

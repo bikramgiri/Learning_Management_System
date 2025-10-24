@@ -8,7 +8,6 @@ export interface ICategoryForData {
 export interface ICategory extends ICategoryForData{
     createdAt : string;
     _id : string;
-    // category : ICategory;
 }
 export interface ICategoryInitialState {
       categories: ICategory[];

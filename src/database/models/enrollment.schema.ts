@@ -8,7 +8,7 @@ export enum EnrollmentStatus {
 interface IEnrollment extends Document{
       student: mongoose.Types.ObjectId;
       course: mongoose.Types.ObjectId;
-      enrollmentStatus: EnrollmentStatus;
+      enrollStatus: EnrollmentStatus;
       whatsapp: string;
       enrolledAt: Date;
 }
@@ -22,7 +22,7 @@ const enrollmentSchema = new Schema<IEnrollment>({
             type: Schema.Types.ObjectId,
             ref: "Course"
       },
-      enrollmentStatus: {
+      enrollStatus: {
             type: String,
             enum: [EnrollmentStatus.Approved, EnrollmentStatus.Rejected, EnrollmentStatus.Pending],
             default: EnrollmentStatus.Pending

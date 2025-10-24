@@ -5,7 +5,7 @@ function Courses(){
       return(
        <>
        <CourseCard />
-            </>
+       </>
       )
 }
 

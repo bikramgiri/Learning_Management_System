@@ -6,21 +6,22 @@ enum Status{
       Failed = "failed"
 }
 
+export enum PaymentMethod{
+      Khalti = "Khalti",
+      Esewa = "Esewa"
+}
+
 interface IPayment extends Document{
-      student : mongoose.Types.ObjectId,
-      course : mongoose.Types.ObjectId,
+      enrollment : mongoose.Types.ObjectId,
       amount : number,
-      status: Status
+      status: Status,
+      paymentMethod: PaymentMethod
 }
 
 const paymentSchema = new Schema<IPayment>({
-      student: {
+      enrollment: {
             type: Schema.Types.ObjectId,
-            ref: "User"
-      },
-      course: {
-            type: Schema.Types.ObjectId,
-            ref: "Course"
+            ref: "Enrollment"
       },
       amount: {
             type: Number,
@@ -30,8 +31,14 @@ const paymentSchema = new Schema<IPayment>({
             type: String,
             enum: [Status.Completed, Status.Pending, Status.Failed],
             default: Status.Pending
+      },
+      paymentMethod: {
+            type: String,
+            enum: [PaymentMethod.Khalti, PaymentMethod.Esewa],
+            default: PaymentMethod.Khalti,
+            required: true
       }
 });
 
-const Payment = mongoose.models.Payment || mongoose.models.Payment || mongoose.model("Payment", paymentSchema);
+const Payment = mongoose.model("Payment", paymentSchema) || mongoose.models.Payment;
 export default Payment;

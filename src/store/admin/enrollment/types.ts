@@ -1,13 +1,19 @@
 import { EnrollmentStatus } from "@/database/models/enrollment.schema";
+import { PaymentMethod } from "@/database/models/payment.schema";
 import { STATUSES } from "@/global/statuses";
 
-interface IStudent {
+export interface IEnrollmentData {
+  whatsapp: string,
+  course: string,
+  paymentMethod: PaymentMethod
+}
+export interface IStudent {
   _id: string;
   username: string;
   email: string;
 }
-
-interface ICourse {
+  
+export interface ICourse {
   _id: string;
   title: string;
   price: number;
@@ -18,7 +24,7 @@ export interface IEnrollment {
   student: IStudent;
   course: ICourse;
   enrolledAt: string;
-  enrollmentStatus: EnrollmentStatus;
+  enrollStatus: EnrollmentStatus;
   whatsapp: string;
 }
 

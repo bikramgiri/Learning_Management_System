@@ -1,5 +1,7 @@
 import connectDB from "@/database/connection";
 import Enrollment from '../../../database/models/enrollment.schema';
+import Payment, { PaymentMethod } from "@/database/models/payment.schema";
+import Course from "@/database/models/course.schema";
 
 
 // *Enroll Course
@@ -7,16 +9,16 @@ export async function enrollCourse(req: Request) {
   try {
     await connectDB();
 
-    const { course, whatsapp } = await req.json();
-    // validate request body
-    if (!course || !whatsapp) {
-      return Response.json(
-        {
-          message: "All fields are required",
-        },
-        { status: 400 }
-      );
-    }
+    const { course, whatsapp, paymentMethod } = await req.json();
+    // // validate request body
+    // if (!course || !whatsapp || !paymentMethod) {
+    //   return Response.json(
+    //     {
+    //       message: "All fields are required",
+    //     },
+    //     { status: 400 }
+    //   );
+    // }
 
     // validate whatsapp number format: 9800000000
     const whatsappRegex = /^[0-9]{10}$/;
@@ -45,6 +47,40 @@ export async function enrollCourse(req: Request) {
       whatsapp,
       student: "1" // session user id to be added here
     });
+
+        const courseData = await Course.findById(course);
+    if(!courseData){
+      return Response.json(
+        {
+          message: "Course not found",
+        },
+        { status: 404 }
+      );
+    }
+
+    // validate payment method 
+    if(paymentMethod !== "Khalti" && paymentMethod !== "Esewa"){
+      return Response.json(
+        {
+          message: "Invalid payment method",
+        },
+        { status: 400 }
+      );
+    }if(paymentMethod === PaymentMethod.Khalti){
+      // create payment record
+      const payment = await Payment.create({
+        enrollment : enrollment._id,
+        amount: courseData.price,
+        paymentMethod: PaymentMethod.Khalti
+      });
+    } else if(paymentMethod === PaymentMethod.Esewa){
+      // // create payment record
+      // const payment = await Payment.create({
+      //   enrollment : enrollment._id,
+      //   amount: courseData.price,
+      //   paymentMethod: PaymentMethod.Esewa
+      // });
+    }
 
     return Response.json(
       {

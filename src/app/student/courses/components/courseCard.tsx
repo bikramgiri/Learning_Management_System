@@ -1,15 +1,24 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchCourses } from "@/store/admin/course/courseSlice";
 import Link from "next/link";
 import Image from "next/image";
 import { fetchCategories } from "@/store/admin/category/categorySlice";
+import Modal from "./model";
 
 function CourseCard() {
   const dispatch = useAppDispatch();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { courses } = useAppSelector((store) => store.courses);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [courseId, setCourseId] = useState("");
+
+  const openModal = useCallback((id: string) => {
+    setIsModalOpen(true);
+    setCourseId(id);
+  }, []);
+  const closeModal = useCallback(() => setIsModalOpen(false), []);
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -62,6 +71,7 @@ function CourseCard() {
     <>
       <section id="courses" className="bg-yellow-00 antialiased ">
         <div className="ml-2 mr-2 mx-auto max-w-screen-2xl px-4 2xl:px-0">
+          {isModalOpen && <Modal closeModal={closeModal} courseId={courseId} />}
           <div className="relative  text-gray-500 focus-within:text-gray-900 mb-4">
             <div className="absolute inset-y-0 left-1 flex items-center pl-3 pointer-events-none ">
               <svg
@@ -105,10 +115,9 @@ function CourseCard() {
           <div className="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
             {currentItems.length > 0 ? (
               currentItems.map((course) => (
-                <Link href={`/coursedetails/${course._id}`} key={course._id}>
-                  <div className="w-full rounded-md border border-gray-200 bg-white items-center justify-between p-6 shadow-sm dark:border-gray-700 dark:bg-gray-600">
-                    <div className="h-42 w-full items-center justify-between">
-                      <div className="relative flex h-40 w-57 items-center justify-center overflow-hidden rounded-md bg-gray-100">
+                  <div key={course._id} className="w-full rounded-md border border-gray-200 bg-white items-center justify-between p-6 shadow-sm dark:border-gray-700 dark:bg-gray-600">
+                  <Link href={`/coursedetails/${course._id}`}>
+                      <div className="relative flex h-40 w-60 items-center justify-center overflow-hidden rounded-md">
                         <Image
                           className="h-full w-full object-cover object-center transition-transform duration-300 hover:scale-105"
                           src="https://shorturl.at/coIW1"
@@ -117,21 +126,26 @@ function CourseCard() {
                           alt="Course Image"
                         />
                       </div>
-                    </div>
-                    <div className="mt-1">
-                      <p className="text-2xl font-medium leading-tight text-gray-900 dark:text-white">
+                    </Link>
+                    <div className="mt-2">
+                      <div className="flex justify-between">
+                        <p className="text-2xl font-medium leading-tight text-gray-900 dark:text-white">
                         {course.title}
                       </p>
+                      <button className="text-sm rounded-md p-2 bg-blue-700 dark:text-white">
+                        {course?.category?.name}
+                      </button>
+                      </div>
 
-                      <div className="mt-4 flex items-center gap-2">
+                      <div className="mt-4 flex items-center justify-between">
                         <span className=" dark:bg-yellow-600 text-white text-sm font-semibold px-2.5 py-0.5 rounded">
-                          4.5 ★
+                          ★ 4.5 (120)
                         </span>
-                        <span className="text-sm dark:text-white ml-2">
+                        {/* <span className="text-sm dark:text-white ml-2">
                           {" "}
                           0 reviews
-                        </span>
-                        <span className="flex items-center gap-2">
+                        </span> */}
+                        {/* <span className="flex items-center gap-2">
                           <svg
                             className="h-6 w-6 text-gray-400 dark:text-gray-300"
                             aria-hidden="true"
@@ -149,18 +163,24 @@ function CourseCard() {
                           <p className="text-sm font-medium text-gray-500 dark:text-white">
                             Best Price
                           </p>
-                        </span>
+                        </span> */}
+                         <p className="text-xl font-medium leading-tight text-gray-900 dark:text-white">
+                          ${course.price}
+                        </p>
                       </div>
-                      <div className="flex flex-wrap mt-6 gap-3 items-center">
-                        <button className="flex gap-2 rounded-md p-2 text-gray-400 bg-gray-700 hover:bg-gray-600 hover:text-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                          <span className="dark:text-white text-sm"> Add to Favorites </span>
+                      <div className="flex mt-6 justify-between items-center">
+                        <button className="cursor-pointer flex gap-2 rounded-md p-2 dark:text-white-400 bg-indigo-600 hover:bg-indigo-700 dark:hover:text-white">
+                          <span className="dark:text-white text-sm"> Add to Wishlist </span>
                           <svg className="h-6 w-6 text-gray-400 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6C6.5 1 1 8 5.8 13l6.2 7 6.2-7C23 8 17.5 1 12 6Z" />
                           </svg>
                         </button>
-                        <p className="text-xl font-medium leading-tight text-gray-900 dark:text-white">
+                        <button onClick={() => openModal(course?._id)} className="cursor-pointer flex rounded-md p-2 dark:text-white-400 bg-indigo-600 hover:bg-indigo-700 dark:hover:text-white">
+                          <span className="dark:text-white text-sm"> Enroll </span>
+                        </button>
+                        {/* <p className="text-xl font-medium leading-tight text-gray-900 dark:text-white">
                           ${course.price}
-                        </p>
+                        </p> */}
                         {/* <span className="mr-60 text-sm font-medium text-gray-900 dark:text-white line-through">
                           $9,99
                         </span> */}
@@ -173,7 +193,6 @@ function CourseCard() {
                       </div>
                     </div>
                   </div>
-                </Link>
               ))
             ) : (
               <p className="text-center col-span-4">No courses available.</p>

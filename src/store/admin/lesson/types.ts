@@ -5,8 +5,8 @@ export interface ILessonForData {
   title : string;
   description : string;
   videoUrl : string;
-  // course : ICourse;
-  course : string;
+  course : ICourse;
+  // course : string;
 }
 
 export interface ILesson extends ILessonForData{

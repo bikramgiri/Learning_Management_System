@@ -155,14 +155,10 @@ export async function updateCategory(req: Request, id: string | undefined) {
   try {
     await connectDB();
 
-    const authResponse = await authMiddleware(req as NextRequest);
-    if(authResponse.status == 401) return authResponse;
+    // const authResponse = await authMiddleware(req as NextRequest);
+    // if(authResponse.status == 401) return authResponse;
     
     // const id = getIdFromRequest(req);
-
-    if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) {
-      return Response.json({ message: 'Invalid category ID' }, { status: 400 });
-    }
 
     const { name, description } = await req.json();
 

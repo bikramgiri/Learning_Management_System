@@ -2,8 +2,8 @@ import { createSlice,PayloadAction } from "@reduxjs/toolkit";
 import { EnrollmentStatus } from "@/database/models/enrollment.schema";
 import { AppDispatch } from "../../store";
 import API from "@/http";
-import { IEnrollment, IEnrollmentInitialData } from "./types";
-// import { IEnrollmentData } from "../courses/courseSlice";
+import { IEnrollment, IEnrollmentInitialData } from './types';
+import { IEnrollmentData } from "./types";
 import { STATUSES } from "@/global/statuses";
 
 const data : IEnrollmentInitialData = {
@@ -40,7 +40,7 @@ const enrollmentSlice = createSlice({
 const {setStatus,setEnrollments, addEnrollment, removeEnrollment } = enrollmentSlice.actions
 export default enrollmentSlice.reducer
 
-export function enrollCourse(data:{courseId:string,whatsapp:string}){
+export function enrollCourse(data:{data:IEnrollmentData}){
     return async function enrollCourseThunk(dispatch:AppDispatch){
         try {
             const response = await API.post("/enrollment",data)
