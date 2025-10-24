@@ -4,6 +4,7 @@ import paymentSlice from "./payment/paymentSlice";
 import courseSlice from "./course/courseSlice";
 import lessonSlice from "./lesson/lessonSlice";
 import studentSlice from "./student/studentSlice";
+import enrollmentSlice from './enrollment/enrollmentSlice';
 
 export const makeStore = () =>{
       return configureStore({
@@ -12,7 +13,8 @@ export const makeStore = () =>{
             payment: paymentSlice,
             courses: courseSlice,
             lessons: lessonSlice,
-            students: studentSlice
+            students: studentSlice,
+            enrollments: enrollmentSlice
       }
 });
 }

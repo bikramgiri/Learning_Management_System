@@ -1,6 +1,6 @@
 import mongoose, {Schema} from "mongoose";
 
-enum EnrollmentStatus {
+export enum EnrollmentStatus {
       Approved = 'approved',
       Rejected = 'rejected',
       Pending = 'pending'
