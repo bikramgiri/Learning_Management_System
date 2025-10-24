@@ -1,8 +1,8 @@
 "use client";
 import { STATUSES } from "@/global/statuses";
-import { fetchCategories } from "@/store/category/categorySlice";
-import { createCourse, reSetStatus } from "@/store/course/courseSlice";
-import { ICourseForData } from "@/store/course/types";
+import { fetchCategories } from "@/store/admin/category/categorySlice";
+import { createCourse, reSetStatus } from "@/store/admin/course/courseSlice";
+import { ICourseForData } from "@/store/admin/course/types";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { ChangeEvent, useEffect, useState } from "react";
 

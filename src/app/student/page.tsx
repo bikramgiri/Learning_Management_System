@@ -1,11 +1,7 @@
-import Dashboard from "@/components/dashboard/Dashboard";
-
 
 function Student(){
       return(
-            <Dashboard >
-                  <h1>Student Page</h1>
-            </Dashboard>
+            <h1 className="text-gray-600">This is Student Page</h1>
       )
 }
 

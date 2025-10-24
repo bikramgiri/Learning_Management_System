@@ -1,6 +1,6 @@
 "use client";
 import { STATUSES } from "@/global/statuses";
-import { createCategory, reSetStatus } from '@/store/category/categorySlice';
+import { createCategory, reSetStatus } from '@/store/admin/category/categorySlice';
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { ChangeEvent, useEffect, useState } from "react";
 

@@ -1,10 +1,11 @@
 "use client"
+import StudentDashboard from "@/components/dashboard/StudentDashboard"
 import { useSession } from "next-auth/react"
 import { redirect } from "next/navigation"
 import { useEffect } from "react"
-import AdminDashboard from "@/components/dashboard/AdminDashboard"
 
-function AdminLayout({ children }: Readonly < { children: React.ReactNode } > ) {
+
+function StudentLayout({ children }: Readonly < { children: React.ReactNode } > ) {
       const { data: session, status } = useSession()
       useEffect(() => {
             if (status === "loading") return
@@ -18,10 +19,10 @@ function AdminLayout({ children }: Readonly < { children: React.ReactNode } > ) 
             return <div className="flex items-center justify-center h-screen text-2xl text-indigo-600">Loading...</div>
       }
       return(
-            <AdminDashboard>
+            <StudentDashboard>
                   {children}
-            </AdminDashboard>
+            </StudentDashboard>
       )
 }
 
-export default AdminLayout
+export default StudentLayout

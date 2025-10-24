@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchStudents } from "@/store/student/studentSlice";
+import { fetchStudents } from "@/store/admin/student/studentSlice";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 

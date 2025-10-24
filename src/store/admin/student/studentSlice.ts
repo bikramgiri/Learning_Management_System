@@ -1,6 +1,6 @@
 import { createSlice,PayloadAction } from "@reduxjs/toolkit";
 import { IStudentInitialData, IStudent } from "./types";
-import { AppDispatch } from "../store";
+import { AppDispatch } from "../../store";
 import API from "@/http";
 import { STATUSES } from "@/global/statuses";
 

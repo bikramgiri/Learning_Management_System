@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Modal from "./components/lessonModal";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { deleteLesson, fetchLessons } from "@/store/lesson/lessonSlice";
+import { deleteLesson, fetchLessons } from "@/store/admin/lesson/lessonSlice";
 import { redirect, useParams } from "next/navigation";
 
 function Lessons() {

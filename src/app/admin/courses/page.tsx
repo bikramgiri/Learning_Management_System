@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Modal from "./components/courseModal";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { deleteCourse, fetchCourses } from "@/store/course/courseSlice";
+import { deleteCourse, fetchCourses } from "@/store/admin/course/courseSlice";
 import { redirect, useParams } from "next/navigation";
 
  function Courses(){

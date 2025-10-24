@@ -1,9 +1,9 @@
 "use client";
 import { STATUSES } from "@/global/statuses";
-import { fetchCourse } from "@/store/course/courseSlice";
+import { fetchCourse } from "@/store/admin/course/courseSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { createLesson, reSetStatus } from "@/store/lesson/lessonSlice";
-import { ILessonForData } from "@/store/lesson/types";
+import { createLesson, reSetStatus } from "@/store/admin/lesson/lessonSlice";
+import { ILessonForData } from "@/store/admin/lesson/types";
 import { useParams } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
 

@@ -1,10 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import categorySlice from "./category/categorySlice";
-import paymentSlice from "./payment/paymentSlice";
-import courseSlice from "./course/courseSlice";
-import lessonSlice from "./lesson/lessonSlice";
-import studentSlice from "./student/studentSlice";
-import enrollmentSlice from './enrollment/enrollmentSlice';
+import categorySlice from "./admin/category/categorySlice";
+import paymentSlice from "./admin/payment/paymentSlice";
+import courseSlice from "./admin/course/courseSlice";
+import lessonSlice from "./admin/lesson/lessonSlice";
+import studentSlice from "./admin/student/studentSlice";
+import enrollmentSlice from './admin/enrollment/enrollmentSlice';
 
 export const makeStore = () =>{
       return configureStore({

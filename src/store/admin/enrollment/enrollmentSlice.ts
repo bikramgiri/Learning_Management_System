@@ -1,6 +1,6 @@
 import { createSlice,PayloadAction } from "@reduxjs/toolkit";
 import { EnrollmentStatus } from "@/database/models/enrollment.schema";
-import { AppDispatch } from "../store";
+import { AppDispatch } from "../../store";
 import API from "@/http";
 import { IEnrollment, IEnrollmentInitialData } from "./types";
 // import { IEnrollmentData } from "../courses/courseSlice";

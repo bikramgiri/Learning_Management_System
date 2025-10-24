@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ICourse, ICourseForData, ICourseInitialState } from "./types";
 import { STATUSES } from "@/global/statuses";
-import { AppDispatch } from "../store";
+import { AppDispatch } from "../../store";
 import API from "@/http";
 
 const datas: ICourseInitialState = {

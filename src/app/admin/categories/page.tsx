@@ -1,7 +1,7 @@
 "use client"
 import { useCallback, useEffect, useState } from "react";
 import Modal from "./components/Modal";
-import { fetchCategories, deleteCategory } from "@/store/category/categorySlice";
+import { fetchCategories, deleteCategory } from "@/store/admin/category/categorySlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 
  function Categories(){

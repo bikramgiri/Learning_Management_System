@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchEnrollements } from "@/store/enrollment/enrollmentSlice";
+import { fetchEnrollements } from "@/store/admin/enrollment/enrollmentSlice";
 
  function Enrollments(){
   const dispatch = useAppDispatch();

@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { ICategoryForData, ICategoryInitialState } from "./types";
 import { STATUSES } from "@/global/statuses";
-import { AppDispatch } from "../store";
+import { AppDispatch } from "../../store";
 import API from "@/http";
 
 const datas: ICategoryInitialState = {
