@@ -45,7 +45,7 @@ const userSchema = new Schema<IUser>({
   },
 });
 
-const User = mongoose.models.User || mongoose.model("User", userSchema);
+const User = mongoose.models?.User || mongoose.model("User", userSchema);
 export default User;
 
 // if field contain only one property then we can write like this

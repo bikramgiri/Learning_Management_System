@@ -31,24 +31,24 @@ const enrollmentSlice = createSlice({
                 state.enrollments.splice(index, 1);
             }
         },
-      //   setPaymentUrl(state,action){
-      //       state.paymentUrl = action.payload
-      //   }  
+        setPaymentUrl(state,action){
+            state.paymentUrl = action.payload
+        }  
       }
 })
 
-const {setStatus,setEnrollments, addEnrollment, removeEnrollment } = enrollmentSlice.actions
+const {setStatus,setEnrollments, addEnrollment, removeEnrollment, setPaymentUrl } = enrollmentSlice.actions
 export default enrollmentSlice.reducer
 
-export function enrollCourse(data:{data:IEnrollmentData}){
+export function enrollCourse(data:IEnrollmentData){
     return async function enrollCourseThunk(dispatch:AppDispatch){
         try {
             const response = await API.post("/enrollment",data)
             if(response.status == 201){
                 dispatch(setStatus(STATUSES.SUCCESS))
                 dispatch( addEnrollment(response.data.data))
-                // window.location.href = response.data.data.paymentUrl
-                // dispatch(pushToCourses(response.data.data))
+                window.location.href = response.data.data.paymentUrl
+                dispatch(setPaymentUrl(response.data.data.paymentUrl))
             }else{
                 dispatch(setStatus(STATUSES.ERROR))
             }

@@ -15,7 +15,8 @@ const Modal: React.FC<IModalProps> = ({ closeModal, courseId }) => {
   const [whatsapp, setWhatsapp] = useState<string>('');
   const [paymentMethod, setPaymentMethod] = useState(PaymentMethod.Khalti);
 //   const { paymentMethod, setPaymentMethod } = useState<PaymentMethod>(PaymentMethod.Khalti);
-  const { status } = useAppSelector((store) => store.courses);
+  const { status, paymentUrl } = useAppSelector((store) => store.enrollments);
+  const [error, setError] = useState<string | null>(null);
 
   const handlePaymentMethod = (
     e: ChangeEvent<HTMLSelectElement>
@@ -26,16 +27,27 @@ const Modal: React.FC<IModalProps> = ({ closeModal, courseId }) => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // setLoading(true);
-    dispatch(enrollCourse({ data: { course: courseId, whatsapp, paymentMethod } }));
+    setError(null);
+
+    // Validate Phone number format: 9800000000, 9800000001, 9867251092, 9800000003
+    const whatsappRegex = /^[0-9]{10}$/;
+    if (!whatsappRegex.test(whatsapp)) {
+      setError("Invalid whatsapp number format");
+      return;
+    }
+
+    dispatch(enrollCourse({ course: courseId, whatsapp, paymentMethod }));
   };
 
   useEffect(() => {
     if (status === STATUSES.SUCCESS) {
       closeModal();
+      window.open(paymentUrl as string, '_blank');
       // dispatch(reSetStatus());
+    } else if(status === STATUSES.ERROR) {
+      setError("Failed to enroll. Please try again.");
     }
-  }, [status, closeModal, dispatch]);
+  }, [status, closeModal, dispatch, paymentUrl]);
 
   return (
     <div
@@ -83,12 +95,14 @@ const Modal: React.FC<IModalProps> = ({ closeModal, courseId }) => {
                 <input
                   onChange={(e) => setWhatsapp(e.target.value)}
                   name="whatsapp"
+                  // value ={whatsapp}
                   type="text"
                   id="course_whatsapp"
                   className="w-full mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
                   placeholder="98XXXXXXX"
                   required
                 />
+                {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
               </div>
             {/* Select Method */}
             <div className="mt-2">
@@ -101,6 +115,7 @@ const Modal: React.FC<IModalProps> = ({ closeModal, courseId }) => {
               <select
                 onChange={handlePaymentMethod}
                 name="paymentMethod"
+                // value={paymentMethod}
                 id="course_paymentMethod"
                 className="w-full mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
                 required
