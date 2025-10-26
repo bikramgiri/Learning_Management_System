@@ -66,9 +66,6 @@ export function fetchEnrollements(){
             if(response.status === 200){
                dispatch( setStatus(STATUSES.SUCCESS))
                 dispatch(setEnrollments(response.data.data))
-            //     if(response.data.data.paymentUrl){
-            //         dispatch(setPaymentUrl(response.data.data.paymentUrl))
-            //     }
             }else{
                 dispatch(setStatus(STATUSES.ERROR))
             }

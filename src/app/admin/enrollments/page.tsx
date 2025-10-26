@@ -24,7 +24,7 @@ import { fetchEnrollements, deleteEnrollment } from "@/store/admin/enrollment/en
 
   const filteredEnrollments = enrollments.filter(
     (enrollment) =>
-      enrollment.student._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      enrollment.student._id.toLowerCase().includes(searchTerm.toLowerCase()) || 
       enrollment.student.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
       enrollment.course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       enrollment.enrollStatus.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -34,7 +34,7 @@ import { fetchEnrollements, deleteEnrollment } from "@/store/admin/enrollment/en
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Number of items per page
+  const itemsPerPage = 6; // Number of items per page
 
   // Calculate total pages
   const totalPages = Math.ceil((filteredEnrollments?.length || 0) / itemsPerPage);
