@@ -31,10 +31,17 @@ const courseSlice = createSlice({
                         state.courses.splice(index, 1);
                   }
             },
+            updateCourseInState: (state, action) => {
+      const { id, data } = action.payload;
+      const index = state.courses.findIndex((course) => course._id === id);
+      if (index !== -1) {
+        state.courses[index] = { ...state.courses[index], ...data };
+      }
+    },
       }
 });
 
-export const { addCourse, removeCourse, setStatus, setCourses, reSetStatus } = courseSlice.actions;
+export const { addCourse, removeCourse, setStatus, setCourses, reSetStatus, updateCourseInState } = courseSlice.actions;
 export default courseSlice.reducer;
 
 export function fetchCourses() {
@@ -111,11 +118,10 @@ export function deleteCourse(id:string) {
 export function updateCourse(id:string, data: ICourseForData) {
       return async function updateCourseThunk(dispatch: AppDispatch) {
             try {
-                  const response = await API.put(`/course/${id}`, data);
+                  const response = await API.patch(`/course/${id}`, data);
                   if(response.status === 200){
+                        dispatch(updateCourseInState({id, data: response.data.data}));
                         dispatch(setStatus(STATUSES.SUCCESS));
-                        dispatch(addCourse(response.data.data));
-                        dispatch(fetchCourses());
                   }else{
                         dispatch(setStatus(STATUSES.ERROR));
                   }

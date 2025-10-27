@@ -211,10 +211,10 @@ export async function updateCourse(req: Request, id: string | undefined) {
   try {
     await connectDB();
 
-    // Validate ID format
-    if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) {
-      return Response.json({ message: "Invalid course ID" }, { status: 400 });
-    }
+    // // Validate ID format
+    // if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) {
+    //   return Response.json({ message: "Invalid course ID" }, { status: 400 });
+    // }
 
     const { title, description, duration, price, category } = await req.json();
 
@@ -286,24 +286,26 @@ export async function updateCourse(req: Request, id: string | undefined) {
         );
       }
 
-      // Validate category is a valid ObjectId
-      if (!category.match(/^[0-9a-fA-F]{24}$/)) {
-        return Response.json(
-          {
-            message: "Invalid category ID"
-          },
-          { status: 400 }
-        );
-      }
+      // // Validate category is a valid ObjectId
+      // if (!category.match(/^[0-9a-fA-F]{24}$/)) {
+      //   return Response.json(
+      //     {
+      //       message: "Invalid category ID"
+      //     },
+      //     { status: 400 }
+      //   );
+      // }
 
     // Update course
-    const updatedCourse = await Course.findByIdAndUpdate(id, {
+    const updateCourse = await Course.findByIdAndUpdate(id, {
       title,
       description,
       duration,
       price,
       category
     }, { new: true });
+        // populate category name only on createdCourse
+    const updatedCourse = await updateCourse.populate("category", "name");
 
     return Response.json(
       {

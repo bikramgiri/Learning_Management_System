@@ -1,5 +1,6 @@
 import mongoose, {Schema} from "mongoose";
-interface ICourse extends Document{
+export interface ICourse extends Document{
+  _id : string;
   title : string;
   featureImage?: string;
   description : string;

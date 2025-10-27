@@ -155,10 +155,13 @@ export async function updateCategory(req: Request, id: string | undefined) {
   try {
     await connectDB();
 
-    // const authResponse = await authMiddleware(req as NextRequest);
-    // if(authResponse.status == 401) return authResponse;
+    const authResponse = await authMiddleware(req as NextRequest);
+    if(authResponse.status == 401) return authResponse;
     
-    // const id = getIdFromRequest(req);
+    // Validate ID format
+    if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) {
+      return Response.json({ message: "Invalid category ID" }, { status: 400 });
+    }
 
     const { name, description } = await req.json();
 
@@ -169,15 +172,7 @@ export async function updateCategory(req: Request, id: string | undefined) {
       }, { status: 400 });
     }
 
-    // Category name already exists or not
-    const existingCategory = await Category.findOne({ name });
-    if (existingCategory) {
-      return Response.json({ 
-        message: 'Category with this name already exists' 
-      }, { status: 400 });
-    }
-
-    // Validate name length
+        // Validate name length
     if (name.length < 2) {
       return Response.json({ 
         message: 'Name must be at least 2 characters long' 
@@ -191,10 +186,29 @@ export async function updateCategory(req: Request, id: string | undefined) {
       }, { status: 400 });
     }
 
+    // Find the existing category
+    const existingCategory = await Category.findById(id);
+    if (!existingCategory) {
+      return Response.json({ message: "Category not found" }, { status: 404 });
+    }
+
+    // Check for duplicate name only if the name is changing
+    if (name !== existingCategory.name) {
+      const duplicateCategory = await Category.findOne({ name });
+      if (duplicateCategory) {
+        return Response.json(
+          { message: "Category name already exists" },
+          { status: 400 }
+        );
+      }
+    }
+
     const updatedCategory = await Category.findByIdAndUpdate(id, { 
       name : name, 
       description : description
-    }, { new: true });
+    }, { 
+      new: true,
+    });
     if (!updatedCategory) {
       return Response.json({ 
         message: 'Category not found' 
