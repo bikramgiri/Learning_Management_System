@@ -112,7 +112,7 @@ export async function getLessons(req: Request) {
         { status: 400 }
       );
     }
-    const lessons = await Lesson.find({ course: courseId }).populate("course");
+    const lessons = await Lesson.find({ course: courseId }).populate("course", "name");
     if (lessons.length === 0) {
       return Response.json(
         {
@@ -287,12 +287,13 @@ export async function updateLesson(req: Request, id: string | undefined) {
     }
 
     // Update lesson
-    const updatedLesson = await Lesson.findByIdAndUpdate(id, {
+    const updateLesson = await Lesson.findByIdAndUpdate(id, {
       course,
       title,
       description,
       videoUrl
     }, { new: true });
+    const updatedLesson = await updateLesson.populate("course", "name");
 
     return Response.json(
       {

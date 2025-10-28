@@ -113,7 +113,6 @@ export async function createCourse(req: Request) {
 export async function getCourses() {
   try {
     await connectDB();
-    console.log(mongoose.models.category, "<-- Mongoose Category Model");
     const courses = await Course.find().populate("category");
     if (courses.length === 0) {
       return Response.json(

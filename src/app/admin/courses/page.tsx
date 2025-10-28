@@ -8,13 +8,13 @@ import { redirect, useParams } from "next/navigation";
 import { ICourse } from "@/database/models/course.schema";
 
  function Courses(){
-    const data = useParams()
-    const categoryId = data.id
+  const data = useParams()
+  const categoryId = data.id
   const [isModalOpen, setIsModalOpen] = useState(false);
   const dispatch = useAppDispatch();
   const {courses, status} = useAppSelector((store) => store.courses);
   const [searchTerm,setSearchTerm] = useState<string>("")
-    const [selectedCourse, setSelectedCourse] = useState<ICourse | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<ICourse | null>(null);
 
   const openModal = useCallback( () => {
     setSelectedCourse(null);

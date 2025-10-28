@@ -1,9 +1,12 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import Modal from "./components/lessonModal";
+import Modal from "./components/AddLessonModal";
+import EditLessonModal from "./components/EditLessonModal";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { deleteLesson, fetchLessons } from "@/store/admin/lesson/lessonSlice";
 import { redirect, useParams } from "next/navigation";
+import { ILesson } from "@/database/models/lesson.schema";
+
 
 function Lessons() {
   const courseId = useParams().id;
@@ -11,9 +14,19 @@ function Lessons() {
   const dispatch = useAppDispatch();
   const { lessons, status } = useAppSelector((store) => store.lessons);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [selectedLesson, setSelectedLesson] = useState<ILesson | null>(null);
 
-  const openModal = useCallback(() => setIsModalOpen(true), []);
-  const closeModal = useCallback(() => setIsModalOpen(false), []);
+  const openModal = useCallback( () => {
+    setSelectedLesson(null);
+    setIsModalOpen(true); 
+  },[])
+
+  const openUpdateModal = useCallback((lesson: ILesson) => {
+    setSelectedLesson(lesson);
+    setIsModalOpen(true);
+  }, []);
+
+  const closeModal = useCallback( ()=>setIsModalOpen(false),[])
 
   useEffect(() => {
     dispatch(fetchLessons(courseId as string));
@@ -67,6 +80,7 @@ function Lessons() {
         {isModalOpen && (
           <Modal closeModal={closeModal} courseId={courseId as string} />
         )}
+            {isModalOpen && selectedLesson && <EditLessonModal closeModal={closeModal} lesson={selectedLesson} courseId={courseId as string} />}
         {/* <div>
             <button
               onClick={() => redirect("/admin/courses")}
@@ -123,7 +137,6 @@ function Lessons() {
             </div>
             </div>
             <div className="flex justify-end ">
-              {/* <h2 className="text-lg font-semibold">{lessons[0]?.course?.title}</h2> */}
               <button
                 onClick={openModal}
                 className="cursor-pointer flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -133,7 +146,7 @@ function Lessons() {
               </button>
             </div>
           </div>
-          <h2 className="text-lg dark:text-indigo-600 font-semibold">Lessons of {lessons[0]?.course?.title}</h2>
+          {/* <h2 className="text-lg dark:text-indigo-600 font-semibold">Lessons of {lessons[0]?.course?.title}</h2> */}
           <div className="overflow-hidden ">
             <table className=" min-w-full rounded-xl">
               <thead className="border-b-2 border-gray-400">
@@ -212,7 +225,7 @@ function Lessons() {
                         </td>
                         <td className=" p-5 ">
                           <div className="flex items-center gap-1">
-                            <button className="p-2  rounded-full  group transition-all duration-500  flex item-center">
+                            <button onClick={() => openUpdateModal(lesson)} className="p-2  rounded-full  group transition-all duration-500  flex item-center">
                               <svg
                                 className="cursor-pointer h-5 w-5"
                                 viewBox="0 0 20 20"

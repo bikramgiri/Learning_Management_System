@@ -33,11 +33,18 @@ const lessonSlice = createSlice({
             },
             reSetLessonsArray: (state: ILessonInitialState) => {
                   state.lessons = [];
-            }
+            },
+            updateLessonInState: (state, action) => {
+                  const { id, data } = action.payload;
+                  const index = state.lessons.findIndex((lesson) => lesson._id === id);
+                  if (index !== -1) {
+                        state.lessons[index] = { ...state.lessons[index], ...data };
+                  }
+            },
       }
 });
 
-export const { addLesson, removeLesson, setStatus, setLessons, reSetStatus, reSetLessonsArray } = lessonSlice.actions;
+export const { addLesson, removeLesson, setStatus, setLessons, reSetStatus, reSetLessonsArray, updateLessonInState } = lessonSlice.actions;
 export default lessonSlice.reducer;
 
 export function fetchLessons(id:string) {
@@ -119,11 +126,10 @@ export function deleteLesson(id:string) {
 export function updateLesson(id:string, data: ILessonForData) {
       return async function updateLessonThunk(dispatch: AppDispatch) {
             try {
-                  const response = await API.put(`/lessons/${id}`, data);
+                  const response = await API.patch(`/lessons/${id}`, data);
                   if(response.status === 200){
+                        dispatch(updateLessonInState({id, data: response.data.data}));
                         dispatch(setStatus(STATUSES.SUCCESS));
-                        dispatch(addLesson(response.data.data));
-                        // dispatch(fetchLessons(id as string));
                   }else{
                         dispatch(setStatus(STATUSES.ERROR));
                   }
