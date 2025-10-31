@@ -1,3 +1,3 @@
 ## Learning_Management_System
 
-E-learning Platform where student able to learn differents categories courses like in Coursera and Udemy.
+A E-learning Platform where students able to learn differents categories courses like in Coursera and Udemy.
